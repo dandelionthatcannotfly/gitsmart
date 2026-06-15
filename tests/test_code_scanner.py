@@ -32,14 +32,15 @@ def simple():
 def complex_func(x):
     if x > 0:
         if x > 1:
-            return 1
-        else:
+            if x > 2:  # 复杂度4，超过阈值3
+                return 1
             return 2
-    else:
         return 3
+    return 4
 """)
         f.flush()
         high = check_complexity(f.name, threshold=3)
-        # simple 复杂度1, complex_func 复杂度4（if嵌套）
-        assert len(high) == 1
-        assert high[0]['name'] == 'complex_func'
+        # simple 复杂度1, complex_func 复杂度4, 只有complex_func > 3
+        names = [h['name'] for h in high]
+        assert 'complex_func' in names
+        assert 'simple' not in names

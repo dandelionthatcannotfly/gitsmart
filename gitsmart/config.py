@@ -24,13 +24,22 @@ DEFAULT_CONFIG = {
     }
 }
 
+def _deep_merge(default: dict, override: dict) -> dict:
+    """深合并字典，嵌套的 dict 递归合并，而不是直接覆盖"""
+    result = default.copy()
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = _deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+
 def load_config(config_path='gitsmart.yaml'):
     """加载配置文件，若文件不存在则返回默认配置"""
     if not os.path.exists(config_path):
         return DEFAULT_CONFIG.copy()
     with open(config_path, 'r') as f:
-        user_config = yaml.safe_load(f)
-    # 合并默认配置（简单合并，只覆盖已有键）
-    merged = DEFAULT_CONFIG.copy()
-    merged.update(user_config)
-    return merged
+        user_config = yaml.safe_load(f) or {}
+    # 深合并：用户配置只覆盖部分字段，其余保留默认值
+    return _deep_merge(DEFAULT_CONFIG, user_config)
