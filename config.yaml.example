@@ -1,0 +1,12 @@
+llm:
+  enabled: true
+  api_type: deepseek
+  api_key: your-api-key-here
+  model: deepseek-chat
+  max_tokens: 60
+
+checks:
+  max_cc_complexity: 10
+  max_function_lines: 50
+  forbid_print: true
+  require_jira: false
